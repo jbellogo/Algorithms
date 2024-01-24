@@ -62,8 +62,8 @@ class GraphAdjacencyList():
         # asume set is subset of V={nodes}
         result = []
         for v in myset:
-            result += [x for x,y in self.edges[v] if x not in (myset+result)]
-        return nbrs
+            result += [edge.get_to_vtx() for edge in self.edges[v] if edge.get_to_vtx() not in (myset+result) ]
+        return result
     
     def get_order(self):
         return self.order
