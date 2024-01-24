@@ -56,19 +56,20 @@ def get_paths(priors, root):
 
 
 def djikstra2(G, s, ordering):
-    A = [s] # explored
-    dist = {node : [float('inf')] for node in G.get_nodes()} # current shortest path distances
-    deltas = {s:0} # absolute shortest path distances
+    A = {s} # explored set
+    l = {node : [float('inf')] for node in G.get_nodes()} # current shortest path distances
+    d = {s:0} # absolute shortest path distances
     priors = {s:s} # for rebuilding the path
 
-    V = G.get_vertices()
+    V = G.get_nodest()
     while A != V:
         # get nbrs of set A
         nbrs = []
-        nbrs = G.get_nbrs_set(A)
-        for nbr, weight in nbrs:
-            if nbr not in explored: # intersection
-                continue 
+        unexplored_nbrs = G.get_nbrs_set(A).difference(A) # {v : v is an unexplored vtx reachable from A}
+        for v in unexplored_nbrs:
+            # vertices from A incident with v: #### not super easy to compute
+            us = {x for x in A}
+            l[v] = min(l[v], min())
 
             d_new = weight + d[v][-1]
             if nbr == "B":

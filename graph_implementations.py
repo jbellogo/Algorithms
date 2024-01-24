@@ -49,9 +49,9 @@ class GraphAdjacencyList():
         return [Edge(v, x, wx) for x,wx in nbrs]
 
     def _get_nodes(self):
-        return [key for key in self.edges.items()]
+        return {key for key in self.edges.keys()} # :: set
 
-    def get_nodes(self):
+    def get_vtx_set(self):
         return self.nodes
     
     def get_nbrs(self, v):
@@ -60,10 +60,14 @@ class GraphAdjacencyList():
 
     def get_nbrs_set(self, myset):
         # asume set is subset of V={nodes}
-        result = []
+        # returns set of edges! 
+        result_vertices = []
+        result_edges = []
         for v in myset:
-            result += [edge.get_to_vtx() for edge in self.edges[v] if edge.get_to_vtx() not in (myset+result) ]
-        return result
+            result_vertices += [edge.get_to_vtx() for edge in self.edges[v] if edge.get_to_vtx() not in (myset+result_vertices) ]
+            ### not quite working!!!!! @TODO 
+            result_edges += [edge for edge in self.edges[v] if edge.get_to_vtx() not in (myset+result_vertices) ] 
+        return { 'edges': result_edges, 'vertrices': result_vertices}
     
     def get_order(self):
         return self.order
