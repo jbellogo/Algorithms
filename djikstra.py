@@ -64,11 +64,14 @@ def djikstra2(G, s, ordering):
     V = G.get_nodest()
     while A != V:
         # get nbrs of set A
-        nbrs = []
-        unexplored_nbrs = G.get_nbrs_set(A).difference(A) # {v : v is an unexplored vtx reachable from A}
+        nbrs = G.get_nbrs_set(A)
+        nbrs_v = nbrs['vertices']
+        nbrs_e = nbrs['edges']
+        
+        unexplored_nbrs = nbrs_v.difference(A) # {v : v is an unexplored vtx reachable from A}
         for v in unexplored_nbrs:
             # vertices from A incident with v: #### not super easy to compute
-            us = {x for x in A}
+            u_s = {x for x in A if x in } # you can do like a list comprehension 
             l[v] = min(l[v], min())
 
             d_new = weight + d[v][-1]

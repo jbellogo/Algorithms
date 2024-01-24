@@ -61,13 +61,15 @@ class GraphAdjacencyList():
     def get_nbrs_set(self, myset):
         # asume set is subset of V={nodes}
         # returns set of edges! 
-        result_vertices = []
-        result_edges = []
+        result_vertices, result_edges = [],[]
         for v in myset:
-            result_vertices += [edge.get_to_vtx() for edge in self.edges[v] if edge.get_to_vtx() not in (myset+result_vertices) ]
-            ### not quite working!!!!! @TODO 
-            result_edges += [edge for edge in self.edges[v] if edge.get_to_vtx() not in (myset+result_vertices) ] 
-        return { 'edges': result_edges, 'vertrices': result_vertices}
+            for edge in self.edges[v]:
+                if edge.get_to_vtx() not in myset: # cant say not in (myset+result_vertices) cuz I care about all edges
+                    result_vertices.append(edge.get_to_vtx())
+                    ### not quite working!!!!! @TODO 
+                    result_edges.append(edge)
+        # remove duplicates in list of vertices 
+        return { 'vertices': list(set(result_vertices)), 'edges': result_edges}
     
     def get_order(self):
         return self.order
