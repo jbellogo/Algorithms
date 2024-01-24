@@ -6,6 +6,28 @@
 # running time is bad for operations on E
 # we want to be able instantly know where we can go from vertex v
 
+class Edge():
+    def __init__(self, from_vtx, to_vtx, weight):
+        self.from_vtx = from_vtx
+        self.to_vtx = to_vtx
+        self.weight = weight 
+    def get_to_vtx(self):
+        return self.to_vtx
+    def get_weight(self):
+        return self.weight
+    def __str__(self):
+        return f"w({self.from_vtx}->{self.to_vtx})={self.weight}"
+
+    def __repr__(self):
+        '''
+        to be able to print lists of Edges
+        '''
+        return self.__str__()
+
+            
+
+# Graph = { Vertex : [WeightedEdge] }
+
 
 class GraphAdjacencyList():
     '''
@@ -19,21 +41,35 @@ class GraphAdjacencyList():
         '''
         top_order is topological_order
         '''
-        self.edges = edges
+        self.edges = {v : self._tuples_to_edges(v, nbrs) for v, nbrs in edges.items()}
         self.order = top_order
+        self.nodes = self._get_nodes()
         
+    def _tuples_to_edges(self, v, nbrs):
+        return [Edge(v, x, wx) for x,wx in nbrs]
+
+    def _get_nodes(self):
+        return [key for key in self.edges.items()]
+
     def get_nodes(self):
-        return [key for key in self.edges.keys()]
+        return self.nodes
     
     def get_nbrs(self, v):
         return self.edges[v]
+
+
+    def get_nbrs_set(self, myset):
+        # asume set is subset of V={nodes}
+        result = []
+        for v in myset:
+            result += [x for x,y in self.edges[v] if x not in (myset+result)]
+        return nbrs
     
     def get_order(self):
         return self.order
     
     def __str__(self):
         graph = ""
-        for v, adj in self.edges.items():
-            edges = [f'w({v + key})={val}' for key,val in adj]
+        for v, edges in self.edges.items():
             graph += f"vertex: {v}, edges: {edges}\n"
         return graph
