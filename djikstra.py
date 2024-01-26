@@ -22,11 +22,9 @@ def djikstra(G, s):
             # X =  ['r', 'f', 'b', 'c']
             # X_edges = [w(s->c)=5, w(s->r)=2, w(a->c)=2, w(a->b)=3, w(a->f)=6]
             U = [ux_edge for ux_edge in X_edges if ux_edge.get_to_vtx() == v] # vertices u in A incident with v in X  
-            print(U)
             U = sorted(U, key = lambda edge : d[edge.get_from_vtx()] + edge.get_weight()) # sort edges based on d(u) + w(uv)
             # first element of U is edge uv which minimizes d(u) + w(uv)
             u = U[0]
-            print(u)
             l[v] = min([ d[u.get_from_vtx()] + u.get_weight(), l[v] ])
             X_updates.append((v, l[v]))        
         w, _ = min(X_updates, key = lambda v : v[1]) # pick min (v, lv) based on lv
