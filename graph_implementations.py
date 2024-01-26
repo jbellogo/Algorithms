@@ -11,6 +11,8 @@ class Edge():
         self.from_vtx = from_vtx
         self.to_vtx = to_vtx
         self.weight = weight 
+    def get_from_vtx(self):
+        return self.from_vtx
     def get_to_vtx(self):
         return self.to_vtx
     def get_weight(self):
@@ -51,7 +53,7 @@ class GraphAdjacencyList():
     def _get_nodes(self):
         return {key for key in self.edges.keys()} # :: set
 
-    def get_vtx_set(self):
+    def get_nodes(self):
         return self.nodes
     
     def get_nbrs(self, v):
@@ -61,6 +63,7 @@ class GraphAdjacencyList():
     def get_nbrs_set(self, myset):
         # asume set is subset of V={nodes}
         # returns set of edges! 
+        # print(myset)
         result_vertices, result_edges = [],[]
         for v in myset:
             for edge in self.edges[v]:
