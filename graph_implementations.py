@@ -72,7 +72,7 @@ class GraphAdjacencyList():
                     ### not quite working!!!!! @TODO 
                     result_edges.append(edge)
         # remove duplicates in list of vertices 
-        return { 'vertices': list(set(result_vertices)), 'edges': result_edges}
+        return (list(set(result_vertices)), result_edges) # (vertices, edges)
     
     def get_order(self):
         return self.order
