@@ -1,4 +1,41 @@
-import pandas as pd
+
+def djikstra(G, s):
+    '''
+    Mathematical implementation.
+    Very inefficient 
+    Only calculaltes shortest paths, it doesn't return them yet.
+    '''
+    A = {s} # explored set
+    l = {node : float('inf') for node in G.get_nodes()} # current shortest path distances
+    d = {s:0} # absolute shortest path distances
+    priors = {s:s} # for rebuilding the paths
+
+    V = G.get_nodes()
+    while A != V:
+        print(f"A is : {A}")
+        # get nbrs of set A
+        nbrs = G.get_nbrs_set(A)
+        X = nbrs['vertices'] # unexplored nbrs
+        X_edges = nbrs['edges']        
+        X_updates = []
+        for v in X:
+            # X =  ['r', 'f', 'b', 'c']
+            # X_edges = [w(s->c)=5, w(s->r)=2, w(a->c)=2, w(a->b)=3, w(a->f)=6]
+            U = [ux_edge for ux_edge in X_edges if ux_edge.get_to_vtx() == v] # vertices u in A incident with v in X  
+            print(U)
+            U = sorted(U, key = lambda edge : d[edge.get_from_vtx()] + edge.get_weight()) # sort edges based on d(u) + w(uv)
+            # first element of U is edge uv which minimizes d(u) + w(uv)
+            u = U[0]
+            print(u)
+            l[v] = min([ d[u.get_from_vtx()] + u.get_weight(), l[v] ])
+            X_updates.append((v, l[v]))        
+        w, _ = min(X_updates, key = lambda v : v[1]) # pick min (v, lv) based on lv
+        d[w] = l[w]
+        # priors[w] = refind it??? How? @TODO
+        A.add(w)
+    return (d, priors)
+
+
 
 
 def djikstra1(G, s, ordering):
@@ -56,46 +93,5 @@ def get_paths(priors, root):
         path= vs_path(v, root, priors)
         stp[v] = (path, weights[v]) 
     return stp
-
-def arg_min(lst, f):
-    '''
-    general but only used for sorting lists of edges
-    '''
-    ordering_list_df = pd.DataFrame(lst).apply(f)
-    
-
-
-def djikstra2(G, s):
-    A = {s} # explored set
-    l = {node : float('inf') for node in G.get_nodes()} # current shortest path distances
-    d = {s:0} # absolute shortest path distances
-    priors = {s:s} # for rebuilding the path
-
-    V = G.get_nodes()
-    while A != V:
-        print(f"A is : {A}")
-        # get nbrs of set A
-        nbrs = G.get_nbrs_set(A)
-        X = nbrs['vertices'] # unexplored nbrs
-        X_edges = nbrs['edges']        
-        X_updates = []
-        for v in X:
-            # X =  ['r', 'f', 'b', 'c']
-            # X_edges = [w(s->c)=5, w(s->r)=2, w(a->c)=2, w(a->b)=3, w(a->f)=6]
-            U = [ux_edge for ux_edge in X_edges if ux_edge.get_to_vtx() == v] # vertices u in A incident with v in X  
-            print(U)
-            U = sorted(U, key = lambda edge : d[edge.get_from_vtx()] + edge.get_weight()) # sort edges based on d(u) + w(uv)
-            # first element of U is edge uv which minimizes d(u) + w(uv)
-            u = U[0]
-            print(u)
-            l[v] = min([ d[u.get_from_vtx()] + u.get_weight(), l[v] ])
-            X_updates.append((v, l[v]))
-        
-        print(X_updates)
-        w, w_weight = min(X_updates, key = lambda v : v[1]) 
-        d[w] = l[w]
-        # priors[w] = refind it
-        A.add(w)
-    return (d, priors)
 
 
