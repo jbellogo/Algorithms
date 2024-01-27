@@ -33,6 +33,7 @@ class Edge():
 
 class GraphAdjacencyList():
     '''
+    Directed
     E = {
         v:[(u,w(v,u)) forall u in N(v)]
         forall v in V
