@@ -1,5 +1,5 @@
 # DiGraph Implementations 
-
+import numpy as np
 # Naive mathematical implementaiton
 #    V = [1,2,3]
 #    E = [12, 13, 32]
@@ -7,6 +7,9 @@
 # we want to be able instantly know where we can go from vertex v
 
 class Edge():
+    '''
+    Same class can be used for directed or undirected graphs, just specify in Graph class
+    '''
     def __init__(self, from_vtx, to_vtx, weight):
         self.from_vtx = from_vtx
         self.to_vtx = to_vtx
@@ -31,7 +34,7 @@ class Edge():
 # Graph = { Vertex : [WeightedEdge] }
 
 
-class GraphAdjacencyList():
+class DiGraph():
     '''
     Directed
     E = {
@@ -83,3 +86,38 @@ class GraphAdjacencyList():
         for v, edges in self.edges.items():
             graph += f"vertex: {v}, edges: {edges}\n"
         return graph
+
+
+
+def is_subset(subset, bigset):
+    return subset.intersection(bigset) == subset
+
+
+class UndiGraph():
+    def __init__(self, V, E):
+        '''
+        Let E be a numpy array matrix
+        '''
+        self.V = V
+        self.E = E
+    def _get_index(self, v):
+        '''v in V'''
+        return self.V.index(v)
+
+    def get_cut(self, S):
+        '''S \subset V'''
+        indices = [] # 0,1,2,3
+        cut = []
+        for v in S:
+            indices.append(self._get_index(v))
+        for row_index, col in enumerate(self.E):
+            for col_index, edge_bool in enumerate(col):
+                include = not is_subset(set([row_index, col_index]), set(indices))
+                include &= (row_index in indices or col_index in indices)
+                if include:
+                    weight = self.E[row_index][col_index]
+                    if weight > 0:
+                        cut.append(Edge(self.V[row_index], self.V[col_index], weight))
+                if row_index == col_index:
+                    break # stop after diagonal. Don't repeat yourself!
+        return cut

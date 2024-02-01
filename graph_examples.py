@@ -1,6 +1,7 @@
-from graph_implementations import GraphAdjacencyList as Graph
+import numpy as np
+from graph_implementations import DiGraph, UndiGraph
 
-G1 = Graph({
+G1 = DiGraph({
     'a':[
         ('c', 2),
         ('b', 3),
@@ -25,7 +26,7 @@ G1 = Graph({
 top_order = ['s', 'a', 'r', 'c', 'b', 'f']
 )
 
-G2 = Graph(
+G2 = DiGraph(
     {
         'A':[
             ('B', 10),
@@ -49,3 +50,14 @@ G2 = Graph(
     },
     top_order = ['A', 'B', 'C', 'D', 'E']
 )
+
+# undirected 
+V = ['a', 'c', 's', 'd', 'f', 't']
+E = np.array([[0,2,5,3,2,1],
+             [2,0,1,0,6,3],
+             [5,1,0,2,0,0],
+             [3,0,2,0,4,0],
+             [2,6,0,4,0,2],
+             [1,3,0,0,2,0]])
+
+UDIG1 =  UndiGraph(V,E)
