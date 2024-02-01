@@ -11,7 +11,9 @@ def prims(G):
     T = {}
     while V != A:
         delta_A = G.get_cut(A)
-    e = min(edge_nbrs, key = lambda edge : edge.weight())
-    print(e)
+        e = min(delta_A, key = lambda edge : edge.get_weight())
+        A.add(e.to_vtx())
+        T.add(e)
+    return T
 
 
