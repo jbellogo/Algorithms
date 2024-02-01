@@ -32,7 +32,7 @@ class Edge():
             
 
 # Graph = { Vertex : [WeightedEdge] }
-
+# should make an abstract parent class for Graph!
 
 class DiGraph():
     '''
@@ -103,6 +103,9 @@ class UndiGraph():
     def _get_index(self, v):
         '''v in V'''
         return self.V.index(v)
+
+    def get_nodes(self):
+        return set(self.V)
 
     def get_cut(self, S):
         '''S \subset V'''
