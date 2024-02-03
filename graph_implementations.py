@@ -1,19 +1,21 @@
 # DiGraph Implementations 
 import numpy as np
-# Naive mathematical implementaiton
-#    V = [1,2,3]
-#    E = [12, 13, 32]
-# running time is bad for operations on E
-# we want to be able instantly know where we can go from vertex v
+from abc import ABC, abstractmethod 
+# Lets say all inputs are in matrix form. [[2,3,4][0,0,1]]
+# Input V :: [] , E :: [[]]
+# Then I want to create internal edge structures. # @Note for assignment we can skip ahead to this!
+# E = [ EdgeObject ]  # But this again is bad
+# Keep the matrix and add an adjacency list. 
+# Adjacency list
+# E = {v1: [Edges(from=v1, )]
+#      v2: } 
 
 class Edge():
-    '''
-    Same class can be used for directed or undirected graphs, just specify in Graph class
-    '''
-    def __init__(self, from_vtx, to_vtx, weight):
+    def __init__(self, from_vtx, to_vtx, weight, directed = False):
         self.from_vtx = from_vtx
         self.to_vtx = to_vtx
         self.weight = weight 
+        self.directed = directed
     def get_from_vtx(self):
         return self.from_vtx
     def get_to_vtx(self):
@@ -21,18 +23,23 @@ class Edge():
     def get_weight(self):
         return self.weight
     def __str__(self):
-        return f"w({self.from_vtx}->{self.to_vtx})={self.weight}"
-
+        dir_or_not = "->" if self.directed else ""
+        return f"w({self.from_vtx}{dir_or_not}{self.to_vtx})={self.weight}"
     def __repr__(self):
-        '''
-        to be able to print lists of Edges
-        '''
+        # to be able to print lists of Edges
         return self.__str__()
-
-            
+    def __eq__(self, other):
+        if not isinstance(other, Edge):
+            return NotImplemented
+        a = self.from_vtx == other.get_from_vtx()
+        b = self.to_vtx == other.get_to_vtx()
+        c = self.weight == other.get_weight()
+        return a and b and c 
 
 # Graph = { Vertex : [WeightedEdge] }
 # should make an abstract parent class for Graph!
+
+
 
 class DiGraph():
     '''
@@ -43,12 +50,9 @@ class DiGraph():
 
     }
     '''
-    def __init__(self, edges, top_order):
-        '''
-        top_order is topological_order
-        '''
+    # edges is list of Adjacency lists. 
+    def __init__(self, edges):
         self.edges = {v : self._tuples_to_edges(v, nbrs) for v, nbrs in edges.items()}
-        self.order = top_order
         self.nodes = self._get_nodes()
         
     def _tuples_to_edges(self, v, nbrs):
@@ -77,10 +81,7 @@ class DiGraph():
                     result_edges.append(edge)
         # remove duplicates in list of vertices 
         return (list(set(result_vertices)), result_edges) # (vertices, edges)
-    
-    def get_order(self):
-        return self.order
-    
+        
     def __str__(self):
         graph = ""
         for v, edges in self.edges.items():
@@ -113,6 +114,7 @@ class UndiGraph():
         cut = []
         for v in S:
             indices.append(self._get_index(v))
+        # O(n*f(m)) operation
         for row_index, col in enumerate(self.E):
             for col_index, edge_bool in enumerate(col):
                 include = not is_subset(set([row_index, col_index]), set(indices))
@@ -122,5 +124,37 @@ class UndiGraph():
                     if weight > 0:
                         cut.append(Edge(self.V[row_index], self.V[col_index], weight))
                 if row_index == col_index:
-                    break # stop after diagonal. Don't repeat yourself!
+                    break # stop after diagonal. Don't repeat yourself+ O(nm) avoided
         return cut
+
+
+# class Graph():
+#     def __init__(self, V, E = None, directed = False):
+#         '''
+#         V : [] # List of vertices
+#         E :: [[]] # Matrix of weights indexed by from,to vertices.
+#         '''
+#         self.V = V
+#         # Keep both, initialize with E=[[w]] as this is easier to type ups
+#         self.edgesMtx = E # Some future applications may benefit from it but it is not implemented rn
+#         self.edgesAdj = {v : [Edge(v, self.V[u_i] , w) for u_i,w in enumerate(self.edgesMtx[v_i]) if w != 0] for v_i, v in enumerate(V)}
+        
+#     def get_v(self):
+#         return self.V
+#     def get_vnbrs(v):
+#         return self.edgesAdj[v]
+#     def get_cut(S):
+#         cut = []
+#         for v in S:
+#             cut += self.edgesAdj[v]
+#     def __str__(self):
+#         graph = ""
+#         for v, edges in self.edgesAdj.items():
+#             graph += f"vtx: {v}, incident edges: {edges}\n"
+#         return graph
+#     def addE(self, from_v, to_v, w):
+
+#         # Add to Adjacency lists
+#         self.edgesAdj[from_v].append(Edge(from_v, to_v, w))
+#         # Add to matrix 
+
