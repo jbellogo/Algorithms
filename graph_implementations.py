@@ -10,32 +10,6 @@ from abc import ABC, abstractmethod
 # E = {v1: [Edges(from=v1, )]
 #      v2: } 
 
-class Edge():
-    def __init__(self, from_vtx, to_vtx, weight, directed = False):
-        self.from_vtx = from_vtx
-        self.to_vtx = to_vtx
-        self.weight = weight 
-        self.directed = directed
-    def get_from_vtx(self):
-        return self.from_vtx
-    def get_to_vtx(self):
-        return self.to_vtx
-    def get_weight(self):
-        return self.weight
-    def __str__(self):
-        dir_or_not = "->" if self.directed else ""
-        return f"w({self.from_vtx}{dir_or_not}{self.to_vtx})={self.weight}"
-    def __repr__(self):
-        # to be able to print lists of Edges
-        return self.__str__()
-    def __eq__(self, other):
-        if not isinstance(other, Edge):
-            return NotImplemented
-        a = self.from_vtx == other.get_from_vtx()
-        b = self.to_vtx == other.get_to_vtx()
-        c = self.weight == other.get_weight()
-        return a and b and c 
-
 # Graph = { Vertex : [WeightedEdge] }
 # should make an abstract parent class for Graph!
 

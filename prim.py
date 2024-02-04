@@ -1,23 +1,31 @@
 import random 
 ###### Prim's Algorithm for Minimum Spanning Trees (MST)
 
-def prims(G):
-    '''
-    Takes in an undirected graph. G::UndirectedG() @TODO pydantic strong types
-    ISSUE. Infinite loop, doesn't progress.
-    '''
-    V = G.get_nodes()
-    s = random.choice(list(V))
-    A = {s}
-    T = []
-    while V != A:
-        delta_A = G.get_cut(A)
-        delta_A = sorted(delta_A, key = lambda edge : edge.get_weight())
-        # print(delta_A)
-        e = delta_A[0]
-        print(e)
-        A.add(e.get_to_vtx())
-        T.append(e)
-    return T
 
+def prim(G):
+    V, s = set(G.get_v()), G.get_r()
+    A, T = {s}, []
+    Tw = 0
+    while V != A:
+        deltaA = G.get_cut(A)
+        e = deltaA[0] # first element has minimum weight
+        A.add(e.get_to_vtx())
+        Tw += e.get_weight()
+        T.append(e)
+    return (T, Tw)
+
+def primInv(G):
+    '''
+    returns Max Spanning Tree... needs more testing
+    '''
+    V, s = set(G.get_v()), G.get_r()
+    A, T = {s}, []
+    Tw = 0
+    while V != A:
+        deltaA = G.get_cut(A)
+        e = deltaA[-1] # last element has max weight
+        A.add(e.get_to_vtx())
+        Tw += e.get_weight()
+        T.append(e)
+    return (T, Tw)
 
