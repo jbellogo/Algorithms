@@ -23,6 +23,7 @@ def djikstra(G):
 
 # def djikstra(G, s):
 #     '''
+#     Second Attempt
 #     Mathematical implementation.
 #     Very inefficient 
 #     Only calculaltes shortest paths, it doesn't return them yet.

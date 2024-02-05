@@ -1,19 +1,3 @@
-# DiGraph Implementations 
-import numpy as np
-from abc import ABC, abstractmethod 
-# Lets say all inputs are in matrix form. [[2,3,4][0,0,1]]
-# Input V :: [] , E :: [[]]
-# Then I want to create internal edge structures. # @Note for assignment we can skip ahead to this!
-# E = [ EdgeObject ]  # But this again is bad
-# Keep the matrix and add an adjacency list. 
-# Adjacency list
-# E = {v1: [Edges(from=v1, )]
-#      v2: } 
-
-# Graph = { Vertex : [WeightedEdge] }
-# should make an abstract parent class for Graph!
-
-
 
 class DiGraph():
     '''
@@ -70,9 +54,6 @@ def is_subset(subset, bigset):
 
 class UndiGraph():
     def __init__(self, V, E):
-        '''
-        Let E be a numpy array matrix
-        '''
         self.V = V
         self.E = E
     def _get_index(self, v):
