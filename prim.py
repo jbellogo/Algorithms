@@ -7,7 +7,7 @@ def prim(G):
     A, T = {s}, []
     Tw = 0
     while V != A:
-        deltaA = G.get_cut(A)
+        deltaA = G.get_cut(A) # ideally this should be inside this algorithm
         e = deltaA[0] # first element has minimum weight
         A.add(e.get_to_vtx())
         Tw += e.get_weight()
