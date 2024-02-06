@@ -87,16 +87,16 @@ def djikstra(G):
 #     print(f"Full distance history: {d}")
 #     return (deltas, priors)
 
-# # rewritting the path obtained from Djikstra priors::[] 
-# def vs_path(v, root, priors):
-#     '''
-#     recursiveley calculates sv-path from root=s to v given a list of priors produced by Djikstra
-#     '''
-#     # base case
-#     if v == root: 
-#         return v
-#     # return compound with recursion on strict input subset 
-#     return vs_path(priors[v], root, priors) + v
+# rewritting the path obtained from Djikstra priors::[] 
+def vs_path(v, root, priors):
+    '''
+    recursiveley calculates sv-path from root=s to v given a list of priors produced by Djikstra
+    '''
+    # base case
+    if v == root: 
+        return v
+    # return compound with recursion on strict input subset 
+    return vs_path(priors[v], root, priors) + v
 
 def get_paths(priors, root):
     stp = {}
