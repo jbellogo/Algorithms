@@ -23,25 +23,28 @@ Idea: Starting from the leaves (known $V_N$), we will recursiveley go down level
 * Algorithm 2.2: To price **path-independent** option, we can simplify Algorithm 2.1 and just count the number of ups. This uses the fact that $V_t^j$ is the same in the binomial lattice no matter independent of the path and only dependent on the number of ups, ie. trajectories $(up, down, up), (down, up, up)$ and $(up,up,down)$ have the same stock value $V_3^2$.
 
 
+## Initialization
+1. Given $S_0, d, u, p^u$ we will compute the lattice evolution up to time $N$ where:
+\[ S_{t}^j = S_0u^jd^{t-j}\]
+for all $t=1,2,\dots, N$, $j=0,\dots, t$. Note that $S_t^j$ stands for "stock price at time $t$ with state $j-$ups from t=0"
+
+
 ## Algorithm 2.1
+To find the price of any option
 
-1. Compute all possible payouts at maturity. $V_T(\omega_1, \dots\omega_n)$ for $\omega_1, \dots\omega_n \in \Omega=\{up, down\}$
+2. Compute all possible payouts at maturity. $V_T(\omega_1, \dots\omega_n)$ for $\omega_1, \dots\omega_n \in \Omega=\{up, down\}$
 
-2. For $n=N-1, \dots, 0$ do: for all $2^n$ states $W = \omega_1, \dots \omega_n$ compute:
+3. For $n=N-1, \dots, 0$ do: for all $2^n$ states $W = \omega_1, \dots \omega_n$ compute:
 
 \[ V_n(W)= e^{-r \Delta t}(q^uV_{n+1} (W, up)+ q^d V_{n+1}(W, down)) \]
 
-3. Return $V_0$
+4. Return $V_0$
 
 This has a complexity of $2^T$ when implemented in a naive way because it goes through all possible $2^T$ evolution. Depending on the option this can be improved. 
 
 
 ## Algorithm 2.2
-To find the price of an option
-
-1. Given $S_0, d, u, p^u$ we will compute the lattice evolution up to time $N$ where:
-\[ S_{t}^j = S_0u^jd^{t-j}\]
-for all $t=1,2,\dots, N$, $j=0,\dots, t$. Note that $S_t^j$ stands for "stock price at time $t$ with state $j-$ups from t=0"
+To find the price of a path-independent option
 
 2. Compute the payouts at maturity (the leaves of the lattice). $V_T^j$
 ```{r, tidy=TRUE, eval=FALSE, highlight=FALSE }
@@ -64,5 +67,46 @@ algo21 <- function(u,d,r, V, T){
   return V[0][0]
 }
 ```
+
+
+## American Option pricing
+In american options we can exercise at any time up until maturity. 
+We must keep track of two values at time $t$: 
+
+1. $V_t^{ex}$: The current exercise value, payout at time $t$. 
+2. $V_t^{cont}$: The continuation value, the value of the option if not exercised at time t (present value of what it is expected to give us). 
+
+Assuming rational agents, at any time $t$ in an American option, we exercise if $V_t^{ex} > V_t^{cont}$ and hold otherwise. 
+
+We can adapt **Algorithm 2.1** to price this:
+
+### Algorithm 2.3:
+1. Compute all possible payouts at maturity $V_T(\vec w)$ corresponsing to all possible states $\vec w = (\omega_0, \dots, \omega_T) \in \Omega=\{up, down\}$ 
+2. Go backwards in time. For $n= N-1, \dots, 0$ do: 
+  * for all states $\vec w$ do:
+      a. Compute the continuation value $V_n^{cont} (\vec w)= e^{-r \Delta t} (q^u V_{n+1}(\vec w, up) + q^dV_{n+1}(\vec w, down))$
+      b. Compute the execution value $V_n^{ex} (\vec w) = max\{S_n(\vec w)-K, 0 \}$
+      c. Compute the rational value $V_n(\vec w) = max\{ V_n^{ex} (\vec w), V_n^{cont} (\vec w)\}$
+      
+3. Return $V_0$
+
+Just like with Algorithm 2.2, if we have a path-independent option we can simplify this algorithm by expressing values in terms of number of up states $V_t^j$ as opposed to expressing them in terms of entire state evolutions $V_t(\vec \omega)$
+
+\newpage
+
+# Black-Scholes Model
+We assume the stock price $S_t$ is an Ito-process. Ito-processes satisfy Geometric Brownian Motion dynamics. 
+
+\[ dS_t = \mu S_t dt+ \sigma S_t dB_t\]
+
+Also we can show using Ito's lemma that the natural logarithm of an ito process satisfies Arithmetic Brownian motion dynamics: 
+
+\[ dln(S_t) = (\mu -\frac{\sigma^2}{2})dt+ \sigma dB_t \] 
+
+And we can solve this without Ito Integrals because the coefficients of the infinitesimal changes ($dt, dB_t$) are constant. 
+
+The solution is $S_t = S_0 \exp\{(\mu -\frac{\sigma^2}{2})t+ \sigma B_t\}$
+
+
 
 
