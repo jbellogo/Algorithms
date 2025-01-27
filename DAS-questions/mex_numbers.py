@@ -1,3 +1,5 @@
+from sys import maxsize
+
 # MEX is the smallest natural number that is not in the array.
 # write updateMEX : list[int], int -> int
 # takes arr and len(arr) and removes the minimum number of elements from it 
@@ -19,16 +21,23 @@ def findMEX(arr: list[int]) -> int:
 
 
 def updateMEX(num: int, arr: list[int]) -> int:
-    sorted_arr = sorted(arr)
-    oldMEX = findMEX(sorted_arr)
-    count = 0
-    while len(sorted_arr) > 0:
-        sorted_arr.remove(sorted_arr[0])
-        newMEX = findMEX(sorted_arr)
-        count += 1
-        if newMEX != oldMEX:
-            return count
-    return -1
+    myset = set(arr) # sorted set (unique elements)
+    oldMEX = findMEX(arr)
+    minCount = maxsize
+    for i in myset:
+        cpy : list[int] = arr.copy()
+        # cpy.remove(i) # only remove one instance of i. Need to remove all instances.
+        cpy = [x for x in cpy if x != i]  # Remove all instances of i
+        if findMEX(cpy) != oldMEX:
+            # i is a candidate
+            count = arr.count(i)
+            if count < minCount:
+                minCount = count
+
+    if minCount != maxsize:
+        return minCount
+    else:
+        return -1
 
 
 
@@ -40,5 +49,5 @@ if __name__ == "__main__":
     assert updateMEX(5, [0,1,2,7,9]) == 1
     assert updateMEX(4, [0,1,1,4]) == 1
     assert updateMEX(4, [1,2,3,4]) == -1
-    ## Ah but this one is wrong now.
     assert updateMEX(4, [0,0,1,2,3,4,5]) == 1
+    assert updateMEX(10, [0,0,0,0,0,0,0,0,0,0]) == 10
