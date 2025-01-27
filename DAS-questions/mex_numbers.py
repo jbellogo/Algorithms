@@ -1,4 +1,3 @@
-from sys import maxsize
 
 # MEX is the smallest natural number that is not in the array.
 # write updateMEX : list[int], int -> int
@@ -6,6 +5,9 @@ from sys import maxsize
 # so that the MEX value of the modified arrray is different from the original MEX value.
 
 # code just returns minimum number of elements to remove. -1 if not possible.
+
+from sys import maxsize
+
 
 def findMEX(arr: list[int]) -> int:
     if arr == []:
