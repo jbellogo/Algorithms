@@ -1,2 +1,3 @@
 # Algorithms
-Coding for Algorithm notes.
+
+Algorithm notes. Includes leetcode-style DAS questions and solutions. Also perosnal implementations of more complex algorithms.
