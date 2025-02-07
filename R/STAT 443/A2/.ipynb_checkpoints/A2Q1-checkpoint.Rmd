@@ -1,0 +1,40 @@
+---
+output: pdf_document
+---
+
+# Q1
+
+## a)
+```{r}
+data <- read.csv("Quality.csv")
+Y <- ts(data)
+ts.plot(Y, main = "Quality Index (Yt) time-series plot")
+acf(Y)
+```
+
+### Comments 
+A weakly stationary process $(Y_t)_{t = 0, \dots, T}$ satisfies three conditions: constant mean over $t$, $E(|Y_t|) < \infty$, and the acvf satisfies $\gamma(r,s)=\gamma(r+s, s+t) \forall r,s,r+t, s+t \in T$. 
+
+* Using the ACF, we conclude the realizatons of $Y_t$ do NOT come from a stationary process because:
+  - The ACF exibits slow decay as the lag ($h$) increases indicating a trend and thus non-constant mean.
+  - ACF will show period if substantial deterministic periodic trend. No period discrenible from ACF. It might by small.
+  - ACF used for checking if the residuals of a regression are correlated. 
+  - All peaks on the ACF are outside critical strip so the third condition of constant covariance over fixed time intervals is not satisfied. 
+* What potential components of an additive classical decomposition model $Y_t = m_t +S_t +R_t$ do you propose to model this data?
+  - From the ACF and time series plot, the model requires a trend component $m_t$ as the mean is not constant over time. 
+  - We need a stochastic component $R_t$ to account for random noise as well, as seen in the peaks of the time-series plot.
+  - We may NOT need a seasonality component $S_t$ since there is no discernible periodic pattern on the ACF.
+  - So I propose $Y_t= m_t + R_t$ 
+  
+
+\newpage
+
+## b)
+```{r}
+test_indx = c(5, 14, 29, 30, 36, 39, 66, 71, 79, 84, 85, 96, 109, 
+              112, 135, 136, 139, 146, 156, 171)
+plot(time(Y), Y, xlab = "Time", ylab = "Quality Index (Yt)", main = "Yt points")
+points(test_indx, Y[test_indx], col = "green")
+legend("bottomright", legend = c("Test set", "Training set"), col=c("green", "black"), pch = 16)
+
+```

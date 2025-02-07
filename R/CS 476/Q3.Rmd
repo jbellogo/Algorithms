@@ -1,0 +1,10 @@
+---
+title: "A2Q3"
+output: pdf_document
+date: "2024-03-03"
+---
+
+```{r}
+
+```
+

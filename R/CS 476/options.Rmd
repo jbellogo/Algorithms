@@ -1,0 +1,30 @@
+---
+title: "Options"
+output: pdf_document
+date: "2024-03-01"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Binomial Lattice
+
+Consider the $N-$period binomial model with $0<d<e^{r\Delta t} < u$. Suppose the derivative payout at maturity $V_N$ is a random variable with known distribution. 
+
+Idea: Starting from the leaves (known $V_N$), we will recursively go down levels $n= N-1, \dots, 0$ computing discounted expected values:
+\[ V_n(\omega_1, \dots, \omega_n) = e^{-r\Delta T}\mathbb{E}^{\mathbb{Q}}(V_{n+1}|\mathcal{F}_n) \]
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

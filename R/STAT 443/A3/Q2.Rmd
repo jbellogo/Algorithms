@@ -1,0 +1,9 @@
+---
+output: pdf_document
+---
+
+# Q2)
+```{r}
+
+```
+
