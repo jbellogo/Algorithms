@@ -15,9 +15,17 @@ using namespace std;
 using namespace LinkedList;
 
 
-class Solution {
+class Solution1 {
 public:
     ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        /*
+        The two lists are already reversed, so we can just add the values together.
+        The only issue is that the lists may be of different lengths, so they are aligned
+        by their lengths to determine the position of the remainders of the additon and 
+        the quotients are carried forward. 
+        @NOTE: What makes it suboptimal is that get_len() is a O(n) operation. So our 
+        solution is O(3n) for time complexity when we could just iterate through both at the time.
+        */
         // determine the larger list. 
         int len1 = l1->get_len();
         int len2 = l2->get_len();
@@ -25,18 +33,19 @@ public:
         ListNode *long_list = len1 > len2 ? l1 : l2;
         ListNode *short_list = len1 <= len2 ? l1 : l2;
 
-        // determine the offset between the two lists. 
 
         // create a new list to store the sum. 
         ListNode *added_list = new ListNode(); // head of the new list
-        ListNode *added_list_traverse = added_list; // pointer to the last node of the new list
+        ListNode *added_list_traverse = added_list; // pointer to traverse the new list
+
         int carry_forward = 0;
 
         while(long_list != nullptr){
-            int sum = long_list->val; // should keep prior quotient (lists are already reversed)
+            int sum = long_list->val;
             sum += carry_forward; // this needs to be here before carry_forward is potentially reset to 0. 
+            // Since the list are reversed, iterate through both simultaneously from start to end
+            // While the smaller list is not exhausted, add the values together mod 10, carry forward the quotient
             if (short_list != nullptr) {
-                // cout << "short_list: " << short_list->val << endl;
                 sum += short_list->val;
                 short_list = short_list-> next;
             } else {
@@ -59,8 +68,43 @@ public:
 };
 
 
-void test1(){
-    Solution s;
+class Solution2 {
+    // Solution by Rahul Varma
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        // How to do it without taking the length of the lists?
+        ListNode *dummy_head = new ListNode(); // will be removed at end.
+        ListNode *tail = dummy_head; // tail is a good name for this traversing pointer.
+
+        int carry = 0;
+
+        // While one of these conditions is true, we need to keep iterating. 
+        // WLOG:
+        // * if l1 is the only true, the tail array keeps copying off it. 
+        // * If carry and l1 are true, the tail array keeps copying off l1 and applies the carry once 
+        // * If only carry is true, we must add an additional final node to hold the carry.
+
+        while (l1 != nullptr || l2 != nullptr || carry != 0){
+            int digit1 = (l1==nullptr) ? 0 : l1->val;
+            int digit2 = (l2==nullptr) ? 0 : l2->val;
+            int sum = digit1 + digit2 + carry;
+            carry = sum / 10;
+            int digit = sum % 10;
+            
+            tail->next = new ListNode(digit);
+            tail = tail->next;
+
+            l1 = (l1==nullptr) ? nullptr : l1->next; 
+            l2 = (l2==nullptr) ? nullptr : l2->next;
+        }
+        ListNode *head = dummy_head->next;
+        delete dummy_head;
+        return head;
+    }
+};
+
+
+void test1(Solution2 &s){
 
     vector<int> v1 = {2, 4, 3};
     vector<int> v2 = {5, 6, 4};
@@ -78,8 +122,7 @@ void test1(){
 }
 
 
-void test2(){
-    Solution s;
+void test2(Solution2 &s){
     // 34916+465=35381
 
     vector<int> v1 = {6, 1, 9, 4, 3};
@@ -98,9 +141,8 @@ void test2(){
 }
 
 
-void test3(){
+void test3(Solution2 &s){
     // test that additions which result in bigger number of digits are handled correctly. 
-    Solution s;
 
     vector<int> v1 = {0, 5};
     vector<int> v2 = {5, 5};
@@ -118,9 +160,8 @@ void test3(){
 }
 
 
-void test4(){
+void test4(Solution2 &s){
     // test that additions which result in bigger number of digits are handled correctly. 
-    Solution s;
 
     vector<int> v1 = {9, 9, 9, 9, 9, 9, 9};
     vector<int> v2 = {9, 9, 9, 9};
@@ -139,13 +180,14 @@ void test4(){
 
 
 int main(){
+    Solution2 s;
     cout << "test1" << endl;
-    test1();
+    test1(s);
     cout << "test2" << endl;
-    test2();
+    test2(s);
     cout << "test3" << endl;
-    test3();
+    test3(s);
     cout << "test4" << endl;
-    test4();
+    test4(s);
     return 0;
 }
