@@ -33,22 +33,19 @@ public:
         int carry_forward = 0;
 
         while(long_list != nullptr){
-            // cout << "offset: " << offset << endl;
-            // cout << "long_list: " << long_list->val << endl;
             int sum = long_list->val; // should keep prior quotient (lists are already reversed)
-            // addition will be made while offset is greater than 0 (recall the lists are reversed)
-            sum += carry_forward;
+            sum += carry_forward; // this needs to be here before carry_forward is potentially reset to 0. 
             if (short_list != nullptr) {
                 // cout << "short_list: " << short_list->val << endl;
                 sum += short_list->val;
-                carry_forward = sum / 10;
-                sum %= 10;
                 short_list = short_list-> next;
             } else {
                 carry_forward = 0; // needs to be reset to 0 once short_list reaches nullptr
             }
+            carry_forward = sum / 10;
+            sum %= 10;
             added_list_traverse->val = sum;
-            // cout << "added_list: " << current_added_list->val << endl;
+
             if (long_list->next != nullptr){
                 added_list_traverse->next = new ListNode();
                 added_list_traverse = added_list_traverse->next;
@@ -56,8 +53,6 @@ public:
                 added_list_traverse->next = new ListNode(carry_forward);
             }
             long_list = long_list->next;
-
-
         }
         return added_list;      
     }
@@ -117,9 +112,7 @@ void test3(){
 
     l1->print();
     l2->print();
-    cout << "result: ";
     result->print();
-    cout << endl;
 
     assert(get_vector_from_linked_list(result) == v3);
 }
@@ -139,18 +132,20 @@ void test4(){
 
     l1->print();
     l2->print();
-    cout << "result: ";
     result->print();
-    cout << endl;
 
     assert(get_vector_from_linked_list(result) == v3);
 }
 
 
 int main(){
+    cout << "test1" << endl;
     test1();
+    cout << "test2" << endl;
     test2();
+    cout << "test3" << endl;
     test3();
+    cout << "test4" << endl;
     test4();
     return 0;
 }
