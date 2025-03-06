@@ -132,7 +132,6 @@ public:
     }
 
 
-
     string longestPalindrome(string s) {
         int n = s.length();
         string candidate = "";
