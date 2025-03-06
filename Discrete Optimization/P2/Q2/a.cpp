@@ -1,7 +1,12 @@
 
 // A2Q2a
+// Approach 2: BFS
 
-#include<bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <climits>
+
 using namespace std;
 
 
@@ -43,21 +48,6 @@ void Graph::addEdge(int u, int v)
     orderings[v] -=1;
 }
 
-// int Graph::semiArb(int k, vector<bool> &visited)
-// // DFS adapted
-// {
-//     int ans = 0;
-//     visited[k] = true;
-//     printf("current recursive on %d\n", k);
-//     for (int &nbr : adj[k]){
-//         if (!visited[nbr]){
-//             ans += 1+ semiArb(nbr, visited);
-//         }
-//     }
-//     printf("ans: %d\n",ans);
-
-//     return ans;
-// }
 int Graph::chose_root(){
     int maxOrd = INT_MIN;
     int maxIndx = 0;

@@ -1,7 +1,10 @@
 
 // A2Q2a
+// Approach 1: DFS
 
-#include<bits/stdc++.h>
+#include <iostream>
+#include <vector>
+
 using namespace std;
 
 
