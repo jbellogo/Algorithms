@@ -8,7 +8,7 @@ using namespace std;
 class Solution {
 public:
     // INNEFFICIENT 
-    int reverse(int x) {
+    int reverse_inefficient(int x) {
 
         // handle tricky edge case
         if (x == INT_MIN || x == INT_MAX) return 0;
@@ -29,7 +29,8 @@ public:
             int x_rev = q.front();
             int power = q.size();
             // check overflow
-            // basically trying to make checks before making computations
+            // (basically trying to make checks before making computations)
+            // this digit added could be over 3 million.
             if (power-1 >= 9 && x_rev > 2) return 0;
             int digit = x_rev * pow(10, power-1);
 
@@ -38,15 +39,31 @@ public:
             ans += digit;
             q.pop();
         }
-        return is_negative ? -ans : ans;
-        
+        return is_negative ? -ans : ans; 
+    }
+
+    int reverse(int x){
+        int ans = 0;
+        // x is allowed to be negative directly
+        while (x != 0){
+            int remainder = x %10;
+            // before monotonically increasing recursive function, simple inequality
+            // 10*ans +remainder > INT_MAX -> ans-remainder/10 > INT_MAX/10, but since remainder in [0,9] 
+            //        integet division will make it zero all the time, so don't need it!!!!. 
+            if (ans > INT_MAX/10 || ans  < INT_MIN/10) {
+                return 0;
+            }
+            ans = 10*ans + remainder;
+            x/=10;
+        }
+        return ans;
     }
 };
 
 void test0(Solution &sol){
     int x = 123;
     int ans = sol.reverse(x);
-    // cout << "actual: " << ans << ", expected: " << 321 << endl;
+    cout << "actual: " << ans << ", expected: " << 321 << endl;
     assert(ans == 321);
 }
 

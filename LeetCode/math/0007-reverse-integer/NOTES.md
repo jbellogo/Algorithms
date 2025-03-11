@@ -13,3 +13,17 @@ example:
 1534236469 reversed is 9646324351 which is greater than INT_MAX
 1534236469 < INT_MAX < 9646324351
 
+# Efficient Solution
+I did not realize at first that if you allow for a linear recursive function, you can compute the reverse number in a linear time.
+
+Think of the example x = 1234
+At each iteration we would like to see the following progress on answer:
+* ans = 4
+* ans = 43
+* ans = 432
+* ans = 4321
+
+this sequence can easily be achieved with:
+\[ans = 10*ans + remainder; ans_0 = 0\]
+
+

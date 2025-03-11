@@ -4,8 +4,10 @@
 #include <cassert>
 using namespace std;
 
+
 class Solution {
 public:
+
     string convert(string s, int numRows) {
         int mod = (numRows == 1) ? 1 : numRows * 2 - 2;
         vector<string> rows(numRows, "");
