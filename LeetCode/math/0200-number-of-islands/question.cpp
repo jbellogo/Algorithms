@@ -1,8 +1,13 @@
 #include <queue>
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include <cassert>
 using namespace std; 
+
+#include <chrono>
+using namespace std::chrono;
+
 
 
 class Solution {
@@ -12,76 +17,53 @@ public:
         int numCols = grid[0].size();
         queue<pair<int, int>> q ; // coordinates 
         
-        vector<vector<int>> visited(numRows, vector<int>(numCols, 0)); // starts from zero matrix ends up the same as grid
-
-        ////////// For testing ////////////
-        vector<vector<pair<int, int>>> islands;
-        ////////////////////////////////
 
         int num_islands = 0;
-        // find root for DFS
-        pair<int, int> root;
+        // find root for BFS
         for (int i = 0 ; i < numRows ; i++){
             for (int j = 0; j < numCols ; j++){
-                if (grid[i][j] == '1' && visited[i][j] == 0) {
-                    cout << "starting BFS at ROOT: (" << i << "," << j << ")" << endl;
-                    root = make_pair(i,j);
-                    q.push(root);
-
-                    //////// For testing ////////////
-                    vector<pair<int, int>> island;
-                    ////////////////////////////////
+                if (grid[i][j] == '1') {
+                    q.push(make_pair(i,j));
+                    num_islands++;   // easier to see here than after the while loop
 
                     // BFS on binary tree begins
                     while (!q.empty()){
                         pair<int, int> coords = q.front();
                         int x = coords.first, y = coords.second;
-                        visited[x][y] = 1;
-                        //////// For testing ////////////
-                        island.push_back(coords);
-                        ////////////////////////////////
+                        // this guard is super necessary, otherwise we repeat visits to the same node, why? Not sure.
+                        if (grid[x][y] == '0'){
+                            q.pop();
+                            continue;
+                        }
+                        grid[x][y] = '0'; // mark as visited, this itself is optimization as we wonto run the if check again
+                        q.pop();
 
-                        // cout << "adding x,y: " << x << "," << y << endl;
                         // right child (y+1)
-                        if (y+1 < numCols && grid[x][y+1] == '1' && visited[x][y+1] == 0){
+                        if (y+1 < numCols && grid[x][y+1] == '1'){
                             q.push(make_pair(x,y+1));
                         }
                         // down child (x+1)
-                        if (x+1 < numRows && grid[x+1][y] == '1' && visited[x+1][y] == 0){
+                        if (x+1 < numRows && grid[x+1][y] == '1'){
                             q.push(make_pair(x+1,y));
                         }
                         // left child (y-1)
-                        if (y-1 >= 0 && grid[x][y-1] == '1' && visited[x][y-1] == 0){
+                        if (y-1 >= 0 && grid[x][y-1] == '1'){
                             q.push(make_pair(x,y-1));
                         }
                         // up child (x-1)
-                        if (x-1 >= 0 && grid[x-1][y] == '1' && visited[x-1][y] == 0){
+                        if (x-1 >= 0 && grid[x-1][y] == '1'){
                             q.push(make_pair(x-1,y));
                         }
-
-                        q.pop();
                     } 
-                    num_islands++;   
-                    /////// For testing ////////////
-                    islands.push_back(island);
-                    ////////////////////////////////
                 }
             }
         }
-        //////// For testing ////////////
-        for (int i = 0; i < islands.size(); i++){
-            cout << "Island " << i+1 << ": ";
-            for (int j = 0; j < islands[i].size(); j++){
-                cout << "(" << islands[i][j].first << "," << islands[i][j].second << ") ";
-            }
-            cout << endl;
-        }
-        ////////////////////////////////
         return num_islands;
     }
 };
 
 void test1(Solution &sol){
+    cout << "--------------- test1 ---------------" << endl;
     vector<vector<char>> grid = {{'1','1','1','1','0'},
                                  {'1','1','0','1','0'},
                                  {'1','1','0','0','0'},
@@ -138,6 +120,29 @@ void test6(Solution &sol){
     assert(ans == 8);
 }
 
+
+
+void testBig(Solution &sol){
+    cout << "--------------- testBig ---------------" << endl;
+    ifstream file("big.in");
+    vector<vector<char>> grid;
+    string line;
+    while (getline(file, line)){
+        vector<char> row;
+        for (char c : line){
+            if (c == '0' || c == '1'){
+                row.push_back(c);
+            }
+        }
+        grid.push_back(row);
+    }
+    auto start = high_resolution_clock::now();
+    int ans = sol.numIslands(grid);
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
+}
+
 int main(){
     Solution sol;
     test1(sol);
@@ -146,5 +151,6 @@ int main(){
     test4(sol);
     test5(sol);
     test6(sol);
+    testBig(sol);
 }
 
