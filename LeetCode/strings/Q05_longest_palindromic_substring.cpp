@@ -138,7 +138,6 @@ public:
 
         for (int i = 0; i < n; i++){
             // ODD palindromes
-            char center = s[i];
             int width = 0;
 
             for (int j = 1; 0 <= i-j && i+j <= n-1 ; j++){

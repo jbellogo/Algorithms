@@ -30,7 +30,7 @@ public:
                     while (!q.empty()){
                         pair<int, int> coords = q.front();
                         int x = coords.first, y = coords.second;
-                        // this guard is super necessary, otherwise we repeat visits to the same node, why? Not sure.
+                        // @IMPORTANT: this guard is super necessary, otherwise we repeat visits to the same node, why? Not sure.
                         if (grid[x][y] == '0'){
                             q.pop();
                             continue;
