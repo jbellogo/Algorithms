@@ -19,7 +19,7 @@ using namespace std;
 class Solution {
     public:
 
-        vector<int> rightSideView(TreeNode* root) {
+        vector<int> Inefficient(TreeNode* root) {
             int lvl = 1;
             vector<TreeNode*> frontier;
             frontier.push_back(root);
@@ -53,6 +53,45 @@ class Solution {
             return rightmosts;
         }
 
+        vector<int> rightSideView(TreeNode* root) {
+            int lvl = 1;
+            queue<TreeNode*>frontier;
+            frontier.push(root);            
+            vector<int> rightmosts;
+
+            TreeNode * temp;
+
+            while (!frontier.empty()){
+                cout << "lvl: " << lvl << " frontier: ";
+                // not using i, just want to control how I process all chilren at a time
+                const int children_in_level = frontier.size(); // before adding new children 
+                for (int i = 0; i < children_in_level; i++){
+                    temp = frontier.front();
+                    frontier.pop();
+                    if (temp == nullptr){
+                        continue;
+                    }
+                    // update answer
+                    if (rightmosts.size() == lvl){
+                        rightmosts[lvl-1] = temp->val;
+                    } else {
+                        rightmosts.push_back(temp->val);
+                    }
+                    TreeNode* left = temp->left;
+                    TreeNode* right = temp->right;
+                    for (auto &child : vector<TreeNode*>{left, right}){
+                        if (child != nullptr){
+                            frontier.push(child); // it's okay
+                        }
+                    }
+                }
+                cout << endl;
+                lvl++;
+            }
+            return rightmosts;
+        }
+
+        
 
         vector<int> FirstAttempt(TreeNode* root) {
             queue<TreeNode *> q;
