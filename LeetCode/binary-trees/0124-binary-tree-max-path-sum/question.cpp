@@ -12,8 +12,11 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
 };
+
+typedef vector<TreeNode*> Path; 
+
  
- void print_path(vector<TreeNode*> path){
+ void print_path(Path path){
         for (int i = 0; i < path.size(); i++){
 
             cout << path[i]->val; 
@@ -26,15 +29,20 @@ struct TreeNode {
 
 
  struct PathsState{
+    
+    Path closed; // max length closed path
+    Path open;   // max length open path
+    int closed_weight;        // weight of max length closed path
+    int open_weight;          // weight of max length open path
 
-    // "max length closed path"
-    vector<TreeNode*> closed = {}; 
-    int closed_len = 0; 
+    // Constructors 
+    PathsState(TreeNode* leaf) : closed({}), open({leaf}), closed_weight(0), open_weight(leaf->val) {
+        assert(leaf != nullptr);
+    }
 
-    // "max length open path"
-    vector<TreeNode*> open = {}; // pointer, value
-    int open_len = 0; 
+    PathsState() : closed({}), open({}), closed_weight(0), open_weight(0) {}
 
+    // Debugging
     void print_state(){
         cout << "CLOSED : ";
         print_path(this->closed);
@@ -51,9 +59,9 @@ class Solution {
             return (v != nullptr && v->left == nullptr && v->right == nullptr);
         }
 
-        vector<TreeNode*> append_paths(vector<TreeNode*> p1, TreeNode* elem, vector<TreeNode*> p2){
+        Path append_paths(Path p1, TreeNode* elem, Path p2){
            
-            vector<TreeNode*> new_path = p1;
+            Path new_path = p1;
             new_path.push_back(elem);
             for(int i = 0; i < p2.size(); i++){
                 new_path.push_back(p2[i]);
@@ -61,56 +69,57 @@ class Solution {
             return new_path;
         }
 
+        pair<int, Path> get_max_open_path(PathsState* left, TreeNode* intersection, PathsState* right){
+            Path new_open = left->open_weight > right->open_weight ? left->open : right->open;
+            int new_open_weight = max(left->open_weight, right->open_weight);
 
-        PathsState* combine_states(TreeNode *intersection, PathsState* left, PathsState *right){
-            PathsState* ps = new PathsState();
-
-            // update max_closed_path
-            cout << "------- combine_states -------" << endl;
-            cout << "Intersection: " << intersection->val << endl;
-            if (left != nullptr && right == nullptr){
-                ps->open = left->open;
-                ps->open.push_back(intersection);
-                ps->open_len = left->open_len + intersection->val;
-                ps->closed = left->closed;
-                ps->closed_len = left->closed_len;
-            } else if (right != nullptr && left == nullptr){
-                ps->open = right->open;
-                ps->open.push_back(intersection);
-                ps->open_len = right->open_len + intersection->val;
-                ps->closed = right->closed;
-                ps->closed_len = right->closed_len;
-            } else if (right != nullptr && left != nullptr){
-                cout << "  Neither are nullptr" << endl;
-                // UPDATE MAX CLOSED PATH:            
-                // if you have two local closed paths, compare them.
-                if (left->closed_len >  right->closed_len){
-                    ps->closed = left->closed;
-                    ps->closed_len = left->closed_len;
-                } else {
-                    ps->closed = right->closed;
-                    ps->closed_len = right->closed_len;
-                }
-                // Compare that to joining the two open paths:
-                if (left->open_len + right->open_len + intersection->val > ps->closed_len){
-                    cout << " - joining two open paths for new max_closed at intersections" << endl;
-                    ps->closed = append_paths(left->open, intersection, right->open);
-                    ps->closed_len = left->open_len + right->open_len + intersection->val;
-                }    
-                
-                // UPDATE MAX OPEN PATH
-                if (left->open_len >  right->open_len){
-                    ps->open = left->open;
-                    ps->open_len = left->closed_len;
-                } else {
-                    ps->open = right->open;
-                    ps->open_len = right->open_len;
-                }
-                ps->open.push_back(intersection);
-                ps->open_len++;
+            if (new_open_weight < 0 && intersection->val > 0) {
+                // restart the path.
+                new_open = {};
+                new_open_weight = 0;
             }
-            ps->print_state();
-            cout << "--------------------------------" << endl;
+            // always add intersection to keep it 'open'
+            new_open.push_back(intersection);
+            new_open_weight += intersection->val;
+            return {new_open_weight, new_open};
+        }
+
+
+
+        pair<int, Path> get_max_closed_path(PathsState* left, TreeNode* intersection, PathsState* right){
+            
+            // Case 1: new max-weight closed path is one the right or the left closed paths. 
+            Path new_closed = (left->closed_weight > right->closed_weight) ? left->closed : right->closed;
+            int new_closed_weight = max(left->closed_weight, right->closed_weight);
+
+
+            // Case 2: new max-weight closed path joins the left and right opens at intersection. 
+            int joined_opens_weight = left->open_weight + right->open_weight + intersection->val;
+
+            if (joined_opens_weight > new_closed_weight){
+                new_closed = append_paths(left->open, intersection, right->open);
+                new_closed_weight = joined_opens_weight;
+            }
+
+            // Case 3: new max-weight closed path is one from right or left OPEN paths, becomes closeed after this intersection
+            int max_open = max(left->open_weight, right->open_weight);
+            if (new_closed_weight <  max_open){
+                new_closed = (left->open_weight > right->open_weight) ? left->open : right->open;
+                new_closed_weight = max_open;
+            }
+            return {new_closed_weight, new_closed};
+        }
+
+
+        PathsState* combine_states(PathsState* left, TreeNode *intersection, PathsState *right){
+            pair<int, Path> open = get_max_open_path(left, intersection, right);
+            pair<int, Path> closed = get_max_closed_path(left, intersection, right);
+
+            PathsState* ps = new PathsState();
+            ps->open_weight = open.first;
+            ps->open = open.second;
+            ps->closed_weight = closed.first;
+            ps->closed = closed.second;
             return ps;            
         }
 
@@ -123,15 +132,13 @@ class Solution {
             TreeNode * right = root->right;
             // For all its descendants, compute this
             if (isLeaf(root)){
-                // ps->max_closed_path.push_back({root, root->val});
-                PathsState * ps = new PathsState();
-                ps->open.push_back(root);
-                ps->open_len += root->val;
+                // initialize the state of leafs as singleton open paths, empty closed path.
+                PathsState * ps = new PathsState(root);
                 return ps;
             } 
 
-            PathsState* left_state = nullptr;
-            PathsState* right_state = nullptr;
+            PathsState* left_state = new PathsState();
+            PathsState* right_state = new PathsState();
 
             if (right != nullptr && parents.find(right) == parents.end()){
                 parents[right] = root;
@@ -142,7 +149,7 @@ class Solution {
                 left_state = dfs_visit(left, parents);
             }
 
-            return combine_states(root, left_state, right_state);
+            return combine_states(left_state, root, right_state);
         }
 
 
@@ -157,11 +164,15 @@ class Solution {
                 return root->val;
             }
             PathsState *state = dfs_visit(root, parents);
+
+
+            cout << "----- maxPathsum -----" << endl;
             cout << "MAX CLOSED PATH: " << endl;
             print_path(state->closed);
             cout << "MAX OPEN PATH: " << endl;
             print_path(state->open);
-            return state->closed_len < state->open_len ? state->open_len : state->closed_len;
+            
+            return max(state->closed_weight, state->open_weight);
         }
 };
 
@@ -212,9 +223,50 @@ void test4(Solution &sol){
 void test5(Solution &sol){
     TreeNode *root = new TreeNode(2);
     root->left = new TreeNode(-1);
-    cout << "Max Path Sum: " << sol.maxPathSum(root) << endl;
-    assert(sol.maxPathSum(root) == 2);
+    int res = sol.maxPathSum(root);
+    cout << "Max Path Sum: " << res << endl;
+    assert(res == 2);
 }
+
+void test6(Solution &sol){
+    TreeNode *root = new TreeNode(5);
+    root->left = new TreeNode(-2);
+    root->left->left = new TreeNode(1);
+    int res = sol.maxPathSum(root);
+    cout << "Max Path Sum: " << res << endl;
+    assert(res == 5);
+
+    root->left->left->left = new TreeNode(2);
+    res = sol.maxPathSum(root);
+    cout << "Max Path Sum: " << res << endl;
+    assert(res == 6);
+}
+
+void test7(Solution &sol){
+    TreeNode *root = new TreeNode(-1);
+    root->left = new TreeNode(1);
+    root->right = new TreeNode(-1);
+    root->left->left = new TreeNode(1);
+    root->left->right = new TreeNode(1);
+    root->right->left = new TreeNode(-1);
+    root->right->right = new TreeNode(-1);
+    int res = sol.maxPathSum(root);
+    cout << "Max Path Sum: " << res << endl;
+    assert(res == 3);
+}
+
+
+void test8(Solution &sol){
+    // all negative
+    // [-2,-1]
+    TreeNode *root = new TreeNode(-2);
+    root->left = new TreeNode(-1);
+    int res = sol.maxPathSum(root);
+    cout << "Max Path Sum: " << res << endl;
+    assert(res == -1);
+}
+
+
 
 int main(){
     Solution sol;
@@ -223,4 +275,7 @@ int main(){
     test2(sol);
     test3(sol);
     test4(sol);
+    test5(sol);
+    test6(sol);
+    test7(sol);
 }
