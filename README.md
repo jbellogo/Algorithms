@@ -1,6 +1,8 @@
 # Algorithms
 
-Algorithm notes. Includes leetcode questions and solutions. Also personal implementations of more complex algorithms.
+Algorithm notes. Includes leetcode questions and solutions. Also personal implementations of more complex algorithms. 
+
+The numbered files are LeetCode questions
 
 # Algorithmic Patterns
 Understanding algorithmic patterns is crucial here are some of the key problem-solving techniques:
