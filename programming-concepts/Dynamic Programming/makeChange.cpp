@@ -18,6 +18,18 @@ void print_v(vector<int> &v){
 }
 
 
+void print_change(vector<int> &coeffs, vector<int> &coins){
+    int n = coeffs.size();
+    for (int i = 0; i < n; i++){
+        cout <<  coeffs[i] << " x ($" << coins[i] << ")";
+        if (i < n-1){
+            cout << " + ";
+        } 
+    }
+    cout << endl;
+}
+
+
 
 struct ChangeSequence{
     // By default, a struct has public members
@@ -39,16 +51,17 @@ struct ChangeSequence{
         // setting amount x coin
         change[coin] = amount;
     }
+    void increment_coin(int coin){
+        change[coin]++;
+    }
 
     void print(){
-        for (map<int, int>::iterator it = change.begin(); it != change.end(); i++){
-            cout << "$" << it->first  << " x " << it->second << " ";
+        for (map<int, int>::iterator it = change.begin(); it != change.end(); it++){
+            cout << "$" << it->first  << "x" << it->second << "  ";
         }
         cout << endl;
     }
 }; 
-
-
 
 
 class Solution {
@@ -57,46 +70,52 @@ public:
 
     int makeChange(int target, vector<int> &denominations){
         sort(denominations.begin(), denominations.end(), greater<>());
-        vector<ChangeSeq> change_sequences; 
-        ChangeSeq currSeq = {};
-        return makeChangeRecursive(target, denominations, change_sequences, currSeq);
+        int num_coins = denominations.size();
+        vector<int> coeffiecients(num_coins, 0);
+        map<pair<int, int>, int> memoizations = {}; // based on map<target, coin_idx>
+        return makeChangeRecursive(denominations, target, 0, coeffiecients, memoizations);
     }
 
-    int makeChangeRecursive(int target, vector<int> &denominations, vector<ChangeSeq> &change_sequences, ChangeSeq&currSeq){
-        if (denominations.size() == 0){
+    int makeChangeRecursive(vector<int> &coins, int target, int coin_idx, vector<int> &coefficients, map<pair<int, int>, int> memz){
+        // BASE case 1
+        if (coin_idx >= coins.size()) {
             return 0;
         }
-        int count = 0;
-        int curr_denom = denominations[0]; // current denomination in consideration
-        int bound = target/curr_denom;
-        cout << "target: " << target << " denominations: ";
-        print_v(denominations);
-        cout << "curr_denom: " << curr_denom << endl;
-        cout << "bound: " << bound << endl;
 
+        int coin = coins[coin_idx]; // current denomination in consideration
 
-
-
-        if (target == 0 || (denominations.size() == 1 && target%curr_denom == 0)){
-            cout << "exact change sequence found" << endl;
-            print_change(currSeq, denominations);
-            change_sequences.push_back(currSeq);
-            currSeq = {};
+        // BASE case 2
+        // I like this second and condition as I don't want to be recursing once I get to the last denomination, there is no need, just check a remainder.
+        if (target == 0 || (coin_idx == coins.size()-1 && target % coin ==0)){
+            // cout << "exact change sequence found: ";
+            coefficients[coin_idx] = target/coin;
+            // print_change(coefficients, coins);
             return 1;
-        } else if (denominations.size() == 1){
-            return 0;
         }
-        cout << "attempting to make change" << endl;
-        for (int num_coins = 0; num_coins <= bound; num_coins++){
-            // base case 
-            if (curr_denom*num_coins == target){
-                count++;
-            }
-            int left_over = target-curr_denom*num_coins;
-            denominations.erase(denominations.begin());
-            count+=makeChangeRecursive(left_over, denominations);
+
+        // Memoization check
+        if (memz.find({target, coin_idx}) != memz.end()){
+            // note instead of the interger pair, key, you could just make it a string concatenating the two values, useful say in python where dict keys must be strings.
+            cout << " ---- MEMOIZED KEY FOUND!!!!" << endl;
+            return memz[{target, coin_idx}];
         }
-        return count;
+
+
+        // RECURSION
+        int num_ways = 0; // you don't need to keep multipliers
+        int current_coins = 0;
+
+        while (current_coins*coin <= target) {        
+            int remaining = target-current_coins*coin;
+            // update coefficient sequence 
+            vector<int> coefficients_copy = coefficients;// make copy of coeffs
+            coefficients_copy[coin_idx] = current_coins;      
+
+            num_ways += makeChangeRecursive(coins, remaining, coin_idx+1, coefficients_copy, memz);
+            current_coins++;
+        }
+        memz[{target, coin_idx}] = num_ways;
+        return num_ways;
     }
 
 };
@@ -106,9 +125,28 @@ void test0(Solution &sol){
     int target = 5;
     int result = sol.makeChange(target, denominations);
     cout << "Result: " << result << endl;
+    assert(result == 4);
+}
+
+void test1(Solution &sol){
+    vector<int> denominations = {1, 2, 5};
+    int target = 14;
+    int result = sol.makeChange(target, denominations);
+    cout << "Result: " << result << endl;
+    assert(result == 16);
+}
+
+void test2(Solution &sol){
+    vector<int> denominations = {1, 2, 5, 10, 20, 50};
+    int target = 100;
+    int result = sol.makeChange(target, denominations);
+    cout << "Result: " << result << endl;
+    assert(result == 4562);
 }
 
 int main(){
     Solution sol;
     test0(sol);
+    test1(sol);
+    test2(sol);
 }
