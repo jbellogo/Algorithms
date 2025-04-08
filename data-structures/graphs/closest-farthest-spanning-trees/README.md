@@ -1,3 +1,7 @@
+# Difficulty: Extra Hard
+
+From CO 353
+
 # Closest and Farthest Spanning Trees.
 
 You are given a connected undirected graph $G = (V,E)$ where each edge $e \in E$ is assigned
