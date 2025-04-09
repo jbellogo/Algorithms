@@ -1,13 +1,3 @@
-// given a matrix of zeros and ones, determine size of the biggest region of 1s, 
-// which may be connected vertically, horizontally, or diagonally. 
-
-/*
-Idea: 
-    - Reduces to depth first search, 
-        - dfs_wrapper: Lets iterate through x and y in the dfs_wrapper (quadratic time) 
-          considering (i,j) as a root to start our recursive search for the maximally connected component reachable from it. 
-        - dfs_recursive: We check its nbrs (8 possible 2 horizontal, 2 vertical, and 4 diagonal) and recurse on the first one that is one. 
-*/
 
 #include<vector>
 #include<iostream>
