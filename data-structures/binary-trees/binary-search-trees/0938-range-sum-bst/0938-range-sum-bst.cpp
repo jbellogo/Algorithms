@@ -18,34 +18,46 @@ struct TreeNode {
 class Solution {
 public:
     int rangeSumBST(TreeNode* root, int low, int high) {
-        queue<TreeNode*> q; // queue node addresses. 
-        q.push(root);
+        queue<TreeNode*> frontier; // queue node addresses. 
+        frontier.push(root);
         int sum = 0;
-        while (!q.empty()) {
-            TreeNode* current = q.front();
+        while (!frontier.empty()) {
+            TreeNode* current = frontier.front();
+            frontier.pop();
             if (current != nullptr) {
                 TreeNode* left = current->left;
                 TreeNode* right = current->right;
-
                 int val = current->val;
-                // cout << "checking node: " << val << endl;
                 if (low <= val && val <= high){
                     // check both children
-                    q.push(left);
-                    q.push(right);
+                    frontier.push(left);
+                    frontier.push(right);
                     sum += val;
                 } else if (val < low){
                     // only check the right child
-                    q.push(right);
+                    frontier.push(right);
                 } else if (val > high){
                     // check the left child
-                    q.push(left);
+                    frontier.push(left);
                 }
             }
-            q.pop(); 
         }
         return sum;
-        
+    }
+
+    int rangeSumBST_RECURSIVE(TreeNode* root, int low, int high){
+        if (root == nullptr) return 0;
+        int sum = 0;
+        if (low <= root->val && root->val <= high){
+            sum += root->val;
+        }
+        if (root->val > low){
+            sum += rangeSumBST_RECURSIVE(root->left, low, high);
+        }
+        if (root->val < high){
+            sum += rangeSumBST_RECURSIVE(root->right, low, high);
+        }
+        return sum;
     }
 };
 
