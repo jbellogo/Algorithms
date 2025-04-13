@@ -5,41 +5,58 @@ using namespace std;
 
 class Solution {
 public:
-    string addBinary(string a, string b) {
+    string addBinaryINEFFICIENT(string a, string b) {
+        cout << "REVERSING STRINGS" << endl;
         // reverse pointers
-        int iA = a.length() - 1;
-        int iB = b.length() -1;
+        int i = a.length() - 1;
+        int j = b.length() -1;
         int carry = 0;
         string ans = "";
-        while (iA >= 0 || iB >=0 || carry > 0){
-            // cout << " ----------- " << endl;
-            int amount = carry;
-            // cout << "carry: " << carry << endl;
-
-            if(iA >= 0){
-                int val_a = a[iA] == '1' ? 1 : 0;
-                amount += val_a;
-                // cout << "a amount: " << a[iA] << endl;
+        while (i >= 0 || j >= 0 || carry > 0){
+            if(i >= 0){
+                carry += (a[i] == '1') ? 1 : 0;;
             } 
-            if(iB >= 0){
-                int val_b = b[iB] == '1' ? 1 : 0;
-                amount += val_b;
-                // cout << "b amount: " << b[iB] << endl;
+            if(j >= 0){
+                carry += (b[j] == '1') ? 1 : 0;
             } 
-            // cout << "a + b + carry: " << amount << endl;
 
-            carry = amount/2; 
-            int remainder = amount%2;
+            int remainder = carry%2;
+            carry/=2;
 
             ans  = to_string(remainder) + ans;
-            // cout << "remainder: " << remainder << endl;
-            // cout << "ans: " << ans << endl;
-
-            iA--;
-            iB--;
+            cout << "ans: " << ans << endl;
+            cout << "carry: " << carry << endl;
+            i--;
+            j--;
         }
         return ans;
     }
+
+    string addBinary(string a, string b) {
+        /* FINAL SOLUTION */
+        int i = a.length() - 1;
+        int j = b.length() -1;
+        int carry = 0;
+        string ans = "";
+        while (i >= 0 || j >= 0 || carry > 0){
+            if(i >= 0){
+                carry += (a[i] == '1') ? 1 : 0;;
+            } 
+            if(j >= 0){
+                carry += (b[j] == '1') ? 1 : 0;
+            } 
+
+            int remainder = carry%2;
+            carry/=2;
+
+            ans  += remainder + '0';
+            i--;
+            j--;
+        }
+        reverse(ans.begin(), ans.end());
+        return ans;
+    }
+
 };
 
 void test0(Solution sol){

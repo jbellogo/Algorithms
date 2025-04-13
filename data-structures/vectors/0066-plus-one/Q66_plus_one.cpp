@@ -8,7 +8,26 @@ using namespace std;
 
 class Solution {
 public:
+
+    /* FINAL SOLUTION */
+    // WITHOUT THE STACK
+    // This helps us optimize memory, we edit the digits array in place
     vector<int> plusOne(vector<int>& digits) {
+        for (int i = digits.size()-1; i >= 0; i--){
+            if (digits[i] < 9){
+                digits[i]++;
+                return digits;
+            } else if (digits[i] == 9){
+                digits[i] = 0;
+            }
+        }
+        // If we have not returned, we know we have to add it here. 
+        digits.insert(digits.begin(), 1);
+        return digits;
+    }
+    
+    /* INEFFICIENT SOLUTION it is unnecessary to use a stack to reverse the digits, adds space complexity*/
+    vector<int> plusOneSTACK(vector<int>& digits) {
         stack<int> s;
         vector<int> ans;
         int remainder = 1;
