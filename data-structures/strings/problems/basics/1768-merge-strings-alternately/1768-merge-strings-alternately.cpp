@@ -13,8 +13,8 @@ public:
         string ans = "";
 
         while (it1 != word1.end() || it2 != word2.end()){
-            char c1 = (it1 != word1.end()) ? *it1 : '\0';  // unformtunateley this is elegant but is adding something we don't want to strings.
-            char c2 = (it2 != word2.end()) ? *it2 : '\0';
+            char c1 = (it1 != word1.end()) ? *it1 : '';  // unformtunateley this is elegant but is adding something we don't want to strings.
+            char c2 = (it2 != word2.end()) ? *it2 : '';
 
             ans+=c1;
             ans+=c2;
