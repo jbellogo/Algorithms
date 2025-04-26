@@ -67,7 +67,8 @@ public:
     }
 
     void complete(){
-        // completes current sequence, called when sequence weight reaches target. 
+        // completes current sequence, called when sequence weight reaches target.
+        // since we can explore all paths that react teh target explicitly, we can keep track of the min sequence.
         vector<int> cpy = curr_coeffs;
         complete_sequences.push_back(cpy);
         // // check if new min
@@ -134,6 +135,7 @@ public:
         int coin = coins[coin_idx]; // current denomination in consideration
         if (target == 0 || (coin_idx == coins.size()-1 && target % coin ==0)){
             cout << "exact change sequence found: "; 
+            // you can just save the count here something like min_count = max(min_count, curr_count); curr_count = 0;
             change.set(coin_idx, target/coin);
             change.print();
             change.complete();

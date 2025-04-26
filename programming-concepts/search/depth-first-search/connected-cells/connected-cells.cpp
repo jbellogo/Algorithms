@@ -12,10 +12,12 @@ class Solution{
 public:
     // return the size of the maximally connected region here. 
     int getRegionSizeRecursive(vector<vector<int>> &matrix, int rowStart, int colStart, int numRows, int numCols) {
+        // our 'root' is the current cell (rowStart, colStart)
+        // Base case: if you are on a cell that is not part of the region, return 0.
         if (matrix[rowStart][colStart] == 0){
             return 0;
         }
-        int regionSize = 1; // this node is 1 := unvisited
+        int regionSize = 1; // this node is 1, start counting.
         matrix[rowStart][colStart] = 0; // mark this 'node' as visited
      
         // DFS STEP: for the current 'node' (i,j), check all its 'children' (all around) to see if you find another 'unvisited vertex' (with a matrix val of 1); 
@@ -38,7 +40,7 @@ public:
             for (int col = 0; col < numCols; col++){
                 // iterate through all possible roots finding maximally connected components from them, exactl like dfs
                 if (matrix[row][col] == 1){
-                    // if 'unexplored'
+                    // if 'unexplored', explore it! get the size of the connected region, and if necessary, update the max region size.
                     int region_size = getRegionSizeRecursive(matrix, row, col, numRows, numCols);
                     cout << "region_size: " << region_size << endl; // print every island size!!
                     max_region_size = max(max_region_size, region_size); // very clever

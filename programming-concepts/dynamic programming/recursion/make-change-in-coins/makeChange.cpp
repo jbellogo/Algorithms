@@ -69,11 +69,11 @@ public:
 
 
     int makeChange(int target, vector<int> &denominations){
-        sort(denominations.begin(), denominations.end(), greater<>());
+        sort(denominations.begin(), denominations.end(), greater<>()); // sort in descending order. Greedy approach.
         int num_coins = denominations.size();
         vector<int> coeffiecients(num_coins, 0);
-        map<pair<int, int>, int> memoizations = {}; // based on map<target, coin_idx>
-        return makeChangeRecursive(denominations, target, 0, coeffiecients, memoizations);
+        map<pair<int, int>, int> memoizations = {}; // based on map<target_money_remaining, coin_idx>
+        return makeChangeRecursive(denominations, target, 0, coeffiecients, memoizations); // start with first coin, the largest.
     }
 
     int makeChangeRecursive(vector<int> &coins, int target, int coin_idx, vector<int> &coefficients, map<pair<int, int>, int> memz){
@@ -108,8 +108,8 @@ public:
         while (current_coins*coin <= target) {        
             int remaining = target-current_coins*coin;
             // update coefficient sequence 
-            vector<int> coefficients_copy = coefficients;// make copy of coeffs
-            coefficients_copy[coin_idx] = current_coins;      
+            vector<int> coefficients_copy = coefficients; // make copy of coeffs
+            coefficients_copy[coin_idx] = current_coins;  // update this copy with the current coin count (this is the branching out from the copy, in the recursion tree)
 
             num_ways += makeChangeRecursive(coins, remaining, coin_idx+1, coefficients_copy, memz);
             current_coins++;
