@@ -32,4 +32,4 @@ There are several ways to implement the solution:
    - Time: $O(n)$  
    - Space: $O(1)$ (optimal)
 
-> **Note:** Iterative solutions are often more efficient than their recursive counterparts—not necessarily in time complexity, but in overhead and clarity. Transitioning from recursion to iteration helps expose the structure of the recurrence more clearly. In this case, the problem reveals a classic *second-order linear recurrence*.
+> **Note:** Iterative solutions are often more efficient than their recursive counterparts—not necessarily in time complexity, but in overhead and clarity. Transitioning from recursion to iteration helps expose the structure of the recurrence more clearly and the fact that we know it will take n steps to get our solution. In this case, the problem reveals a classic *second-order linear recurrence*.
