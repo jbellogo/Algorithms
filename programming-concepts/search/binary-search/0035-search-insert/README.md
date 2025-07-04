@@ -1,0 +1,1 @@
+you actually did this very well, 99 percentaline in both time and space, just recall that every time you see the word "sorted array" that is queue for binary search, as it allows for $O(\log{n})$ search

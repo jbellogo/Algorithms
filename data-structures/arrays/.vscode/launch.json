@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "App",
+      "request": "launch",
+      "mainClass": "solution.App",
+      "projectName": "sol"
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/juanbello/Desktop/projects:github/Algorithms/data-structures/arrays",
+      "program": "/Users/juanbello/Desktop/projects:github/Algorithms/data-structures/arrays/build/Debug/outDebug"
+    }
+  ]
+}
